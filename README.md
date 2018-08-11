@@ -22,7 +22,7 @@ TODO: Add the download link
 
 ### Verify
 
-My GPG key can be found at my [Blog](https://rootkitty.tech/public.asc)
+My GPG key can be found at my [Blog](https://rootkitty.tech/pub_key.asc)
 
 `gpg --verify urlf-0.0.1.tar.gz.asc urlf-0.0.1.tar.gz`
 
