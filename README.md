@@ -48,7 +48,7 @@ My GPG key can be found at my [Blog](https://rootkitty.tech/pub_key.asc)
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-Full license is found in the `License` file
+Full license is found in the [License file](https://github.com/rootkit-ty/FUrl/blob/master/License)
 
 ## Contributing
 
