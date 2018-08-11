@@ -1,0 +1,52 @@
+#!/bin/sh
+
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+
+# TODO: Add BSD support. I don't know if XDG-Open is avaliable on BSD distros as readily as it is on linux
+# TODO: Add Windows support. Don't really know how to go approaching it all
+
+# Where to target, either first parameter, or stdin
+# TODO: check this is a file, and accept unlimited parameters
+target_file="${1:-/dev/stdin}"
+
+# Default regex to use, try and make this changeable via options. Ripped directly from URLView and changed only slightly
+default_regex='(((http|https|ftp|gopher)|mailto):(\/\/)?[^ <>\"\t]*|(www|ftp)[0-9]?\\.[-a-z0-9.]+)[^ .,;\t\n\r<\">\\):]?[^, <>\"\t]*[^ .,;\t\n\r<\">\\):]'
+
+
+# If they're missing fzf error, because what's the point?
+if ! command -v fzf > /dev/null 2>&1; then
+	echo >&2 'Please install FZF, or have it avaliable in your $PATH'
+	exit 1
+fi
+
+
+# If the machine is mac
+if [ "$machine" = "Mac" ]; then
+
+	# If ggrep is avaliable use that
+	if command -v ggrep > /dev/null 2>&1; then
+		ggrep -oP "$default_regex" "$target_file" | fzf | xargs open
+
+	# Else if GNU Grep is installed under grep use that
+	elif grep -V | grep "GNU"; then
+		grep -oP "$default_regex" "$target_file" | fzf | xargs open
+
+	# If no GNU Grep installed, error because BSD grep doesn't support PCRE matching
+	else
+		echo >&2 'Please install GNU Grep as BSD grep doesn'\''t support PCRE matching'
+		exit 1
+	fi
+
+# If the machine is linux
+elif [ "$machine" = "Linux" ]; then
+	grep -oP "$default_regex" "$target_file" | fzf | xargs xdg-open
+else
+	echo >&2 'We currently only support MacOS and Linux compatible userspaces'
+fi
